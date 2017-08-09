@@ -9,14 +9,6 @@ apt-get update
 
 apt-get install -y git bzr python-bzrlib lxc pastebinit apt-cacher-ng
 
-set +e
-# Let me handle errors here myself.
-# vbox may error out if we're deploying on lxc, let's just ignore this
-# and we can later detect if vagrant is working correctly.
-apt-get install -y vagrant virtualbox
-# Barf again if anything fails.
-set -e
-
 # Create and set up my user and directories
 if  ! id ${TUSER} ; then
     useradd -m -d ${TUSERHOME} ${TUSER}
@@ -30,7 +22,7 @@ chown ${TUSER}:${TUSER} /var/lib/tarmac
 # Get tarmac and my configuration to deploy
 juju-log "Getting tarmac configs from github"
 [ -e ${TUSERHOME}/.config/tarmac ] && rm -rf ${TUSERHOME}/.config/tarmac || true
-git clone git://github.com/checkbox/tarmac-configs.git ${TUSERHOME}/.config/tarmac
+git clone -b personal-hexr git://github.com/codersquid/tarmac-configs.git ${TUSERHOME}/.config/tarmac
 
 juju-log "Getting customized tarmac from github"
 [ -e ${TUSERHOME}/tarmac ] && rm -rf ${TUSERHOME}/tarmac || true
@@ -38,5 +30,4 @@ git clone git://github.com/checkbox/tarmac.git ${TUSERHOME}/tarmac
 
 juju-log "Installing upstart config file for tarmac-lander"
 cp ${TUSERHOME}/.config/tarmac/tarmac-lander.conf /etc/init
-
 
